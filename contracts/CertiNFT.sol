@@ -31,8 +31,8 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 tokenId,
-        uint256 batchSize
+        uint256, /* tokenId */
+        uint256 /* batchSize */
     ) internal virtual override {
         require(
             from == address(0) || to == address(0),
@@ -41,10 +41,10 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
     }
 
     function _afterTokenTransfer(
-        address from,
+        address, /* from */
         address to,
         uint256 tokenId,
-        uint256 batchSize
+        uint256 /*batchSize*/
     ) internal virtual override {
         emit Attest(to, tokenId);
         emit Revoke(to, tokenId);

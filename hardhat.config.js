@@ -6,12 +6,6 @@ require("@nomiclabs/hardhat-etherscan");
 require("hardhat-contract-sizer");
 module.exports = {
   solidity: "0.8.9",
-  settings: {
-    optimizer: {
-      enabled: true,
-      runs: 200,
-    },
-  },
   gasReporter: {
     currency: "USD",
     gasPrice: 10,
@@ -31,15 +25,21 @@ module.exports = {
     goerli: {
       url: process.env.GOERLI_URL || "",
       accounts:
-        process.env.Wallet_key !== undefined ? [process.env.Wallet_key] : [],
+        process.env.REACT_APP_WALLET_KEY !== undefined
+          ? [process.env.REACT_APP_WALLET_KEY]
+          : [],
     },
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
+    mumbai: {
+      url: process.env.REACT_APP_MUMBAI_URL || "",
       accounts:
-        process.env.Wallet_key !== undefined ? [process.env.Wallet_key] : [],
+        process.env.REACT_APP_WALLET_KEY !== undefined
+          ? [process.env.REACT_APP_WALLET_KEY]
+          : [],
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      polygonMumbai: process.env.REACT_APP_POLYGONSCAN_API_KEY,
+    },
   },
 };
