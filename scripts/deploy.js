@@ -11,7 +11,7 @@ async function main() {
   );
 
   await erc721Verifier.deployed();
-  console.log(verifierName, " tx hash:", erc721Verifier.address);
+  console.log("Deployed Address: ", erc721Verifier.address);
 }
 
 main().catch((error) => {

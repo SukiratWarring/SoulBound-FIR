@@ -1,9 +1,9 @@
 require("dotenv").config();
 require("@nomiclabs/hardhat-waffle");
-require("@openzeppelin/hardhat-upgrades");
 require("hardhat-gas-reporter");
-require("@nomiclabs/hardhat-etherscan");
 require("hardhat-contract-sizer");
+require("@nomiclabs/hardhat-etherscan");
+
 module.exports = {
   solidity: "0.8.9",
   gasReporter: {
@@ -23,7 +23,7 @@ module.exports = {
       allowUnlimitedContractSize: true,
     },
     goerli: {
-      url: process.env.GOERLI_URL || "",
+      url: process.env.REACT_APP_MUMBAI_URL || "",
       accounts:
         process.env.REACT_APP_WALLET_KEY !== undefined
           ? [process.env.REACT_APP_WALLET_KEY]

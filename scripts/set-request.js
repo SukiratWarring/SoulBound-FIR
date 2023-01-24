@@ -3,7 +3,7 @@ async function main() {
 
   const validatorAddress = "0xb1e86C4c687B85520eF4fd2a0d14e81970a15aFB";
 
-  const schemaHash = "83d0ea68cc78f4a9378f6c5591fa32fc"; // extracted from PID Platform
+  const schemaHash = "b59d677f28aea10f93bced3d78e5f253"; // extracted from PID Platform
 
   const schemaEnd = fromLittleEndian(hexToBytes(schemaHash));
 
@@ -16,7 +16,7 @@ async function main() {
   };
 
   // add the address of the contract just deployed
-  ERC721VerifierAddress = "0x8d3E51A384078694Bd4d0eCCa93ad287769eBdcf";
+  ERC721VerifierAddress = "0xd25B2204822940caF51AC40ab07c57C10cAdaD4B";
 
   let erc721Verifier = await hre.ethers.getContractAt(
     "Erc721Verifier",
