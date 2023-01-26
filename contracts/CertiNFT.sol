@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter public tokenIDs;
+    mapping(uint256 => string) public idToTokenUri;
 
     event Attest(address indexed _to, uint256 indexed tokenId);
     event Revoke(address indexed _to, uint256 indexed tokenId);
@@ -15,9 +16,18 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
     constructor() ERC721("CertiNFT", "CNFT") {}
 
     function safeMint(address to, string memory uri) public onlyOwner {
-        _safeMint(to, tokenIDs.current());
+        uint256 tokenidTemp = tokenIDs.current();
         tokenIDs.increment();
-        _setTokenURI(tokenIDs.current(), uri);
+        _safeMint(to, tokenidTemp);
+        _setTokenURI(tokenidTemp, uri);
+    }
+
+    function _setTokenURI(uint256 tokenId, string memory uri)
+        internal
+        virtual
+        override
+    {
+        idToTokenUri[tokenId] = uri;
     }
 
     function burn(uint256 tokenId) external {
