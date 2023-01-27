@@ -1,25 +1,42 @@
 import { React, useState } from "react";
 import axios from "axios";
-
+import { ethers } from "ethers";
+import CertiNft from "../CertiNFT.sol/CertiNFT.json";
 function Upload() {
   const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [degreePeriod, setDegreePeriod] = useState("");
   const [dateOfIssue, setDateOfIssue] = useState("");
+  const [toAddress, setToAddress] = useState("");
+  const mintNft = async (CID) => {
+    const uri = `https://gateway.pinata.cloud/ipfs/${CID}`;
+    console.log(
+      "process.env.REACT_APP_CERTINFT_CONTRACTADDRESS",
+      process.env.REACT_APP_CERTINFT_CONTRACTADDRESS
+    );
+    //calling the contract with ethers
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contractInstance = new ethers.Contract(
+      process.env.REACT_APP_CERTINFT_CONTRACTADDRESS,
+      CertiNft.abi,
+      signer
+    );
+    const tx = await contractInstance.safeMint(toAddress, uri);
+    const receipt = await tx.wait();
+    console.log("receipt", receipt);
+  };
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     console.log(
-      "process.env.REACT_PINATA_APP_JWT",
-      process.env.REACT_PINATA_APP_JWT
-    );
-    console.log(
-      "Name,imageUrl,degreePeriod,dateOfIssue",
+      "Name,imageUrl,degreePeriod,dateOfIssue,toAddress",
       name,
       imageUrl,
       degreePeriod,
-      dateOfIssue
+      dateOfIssue,
+      toAddress
     );
-    const data = JSON.stringify({
+    const data = {
       pinataOptions: {
         cidVersion: 1,
       },
@@ -31,7 +48,7 @@ function Upload() {
         },
       },
       pinataContent: {
-        description: "Proof of Education",
+        // description: "Proof of Education",
         image:
           "https://gateway.pinata.cloud/ipfs/QmZ6iJbUpEfKxUodwx4DgaF9zquvRjJEMXAkH8EJtWPLKm",
         name: `${name}`,
@@ -50,7 +67,7 @@ function Upload() {
           },
         ],
       },
-    });
+    };
     console.log(
       "process.env.REACT_APP_PINATA_API_KEY",
       process.env.REACT_APP_PINATA_API_KEY
@@ -65,13 +82,12 @@ function Upload() {
       },
       data: data,
     };
-    console.log("config.headers", config.headers.Authorization);
 
     const res = await axios(config).catch((err) => {
       console.log("err", err);
     });
-
-    console.log(res.data);
+    console.log(res.data.IpfsHash);
+    mintNft(res.data.IpfsHash);
   };
   const handelName = (e) => setName(e.target.value);
   const handleImageUrl = (e) => setImageUrl(e.target.value);
@@ -81,7 +97,7 @@ function Upload() {
         className="d-flex justify-content-center row g-3"
         onSubmit={handleOnSubmit}
       >
-        <div className="col-md-6 flex">
+        <div className="col-md-5 flex">
           <label for="studentName" className="form-label">
             Name
           </label>
@@ -91,6 +107,18 @@ function Upload() {
             id="studentName"
             placeholder="enter student name .."
             onChange={handelName}
+          />
+        </div>
+        <div className="col-md-5 flex">
+          <label for="toAddress" className="form-label">
+            To Address :
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="studentName"
+            placeholder="0x7e21312123b1s3d..."
+            onChange={(e) => setToAddress(e.target.value)}
           />
         </div>
         <div className="col-10">

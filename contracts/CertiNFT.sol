@@ -76,6 +76,6 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        return idToTokenUri[tokenId];
     }
 }
