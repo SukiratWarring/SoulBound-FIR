@@ -25,6 +25,7 @@ function App() {
             </button>
           </div>
         </nav>
+        {/* <Route path="/Home" element={<Home />} /> */}
         <Route path="/MintNft" element={<MintNft />} />
       </div>
     </Router>
