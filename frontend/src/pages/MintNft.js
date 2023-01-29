@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import axios from "axios";
 import { ethers } from "ethers";
 import CertiNft from "../CertiNFT.sol/CertiNFT.json";
-function Upload() {
+function MintNft() {
   const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [degreePeriod, setDegreePeriod] = useState("");
@@ -165,4 +165,4 @@ function Upload() {
   );
 }
 
-export default Upload;
+export default MintNft;

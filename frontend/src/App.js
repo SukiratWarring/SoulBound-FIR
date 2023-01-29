@@ -1,5 +1,6 @@
 import "./App.css";
-import Upload from "./pages/Upload";
+import MintNft from "./pages/MintNft";
+import { Router, Route } from "react-router-dom";
 function App() {
   const handleConnect = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -10,21 +11,23 @@ function App() {
     }
   };
   return (
-    <div className="App">
-      <nav className="navbar bg-light">
-        <div className="container-fluid ">
-          <a className="navbar-brand">⚒️Major Project</a>
-          <button
-            className="btn btn-outline-success p"
-            type="submit"
-            onClick={handleConnect}
-          >
-            Connect
-          </button>
-        </div>
-      </nav>
-      <Upload />
-    </div>
+    <Router>
+      <div className="App">
+        <nav className="navbar bg-light">
+          <div className="container-fluid ">
+            <a className="navbar-brand">⚒️Major Project</a>
+            <button
+              className="btn btn-outline-success p"
+              type="submit"
+              onClick={handleConnect}
+            >
+              Connect
+            </button>
+          </div>
+        </nav>
+        <Route path="/MintNft" element={<MintNft />} />
+      </div>
+    </Router>
   );
 }
 
