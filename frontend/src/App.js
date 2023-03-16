@@ -1,34 +1,31 @@
 import "./App.css";
 import MintNft from "./pages/MintNft";
-import { Router, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { FirebaseContext, UserContext } from "./context/context";
+import { firebase } from "./lib/firebase.prod";
+import { ChakraProvider } from "@chakra-ui/react";
+import Home from "./pages/Home";
+import RegisterFIR from "./pages/RegisterFIR";
 function App() {
-  const handleConnect = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      /* eslint-disable no-undef */
-      await ethereum.request({ method: "eth_requestAccounts" });
-    } else {
-      console.log("Download MetaMask in the browser!");
-    }
-  };
+  const [currentAccount, setCurrentAccount] = useState(null);
+
   return (
-    <Router>
-      <div className="App">
-        <nav className="navbar bg-light">
-          <div className="container-fluid ">
-            <a className="navbar-brand">⚒️Major Project</a>
-            <button
-              className="btn btn-outline-success p"
-              type="submit"
-              onClick={handleConnect}
-            >
-              Connect
-            </button>
-          </div>
-        </nav>
-        {/* <Route path="/Home" element={<Home />} /> */}
-        <Route path="/MintNft" element={<MintNft />} />
-      </div>
-    </Router>
+    <div className="App">
+      <FirebaseContext.Provider value={{ firebase }}>
+        <UserContext.Provider value={{ currentAccount, setCurrentAccount }}>
+          <ChakraProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/MintNft" element={<MintNft />} />
+                <Route path="/FIR" element={<RegisterFIR />} />
+              </Routes>
+            </BrowserRouter>
+          </ChakraProvider>
+        </UserContext.Provider>
+      </FirebaseContext.Provider>
+    </div>
   );
 }
 
