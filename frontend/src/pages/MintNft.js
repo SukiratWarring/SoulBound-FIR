@@ -11,20 +11,18 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Tabs,
+  Tabs
 } from "@chakra-ui/react";
 import { checkWalletIsConnected } from "../services/checkWalletIsConencted";
 import { useNavigate } from "react-router-dom";
 import uniLogo from "../assets/comapnyLogo.png";
 import html2canvas from "html2canvas";
-import { getStorage, ref } from "firebase/storage";
 import { firebase } from "../lib/firebase.prod";
 
 function MintNft() {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [degreePeriod, setDegreePeriod] = useState("");
   const [dateOfIssue, setDateOfIssue] = useState("");
   const [toAddress, setToAddress] = useState("");
@@ -65,14 +63,14 @@ function MintNft() {
           console.log("url", url);
           const data = {
             pinataOptions: {
-              cidVersion: 1,
+              cidVersion: 1
             },
             pinataMetadata: {
               name: "Certificate",
               keyvalues: {
                 customKey: "customValue",
-                customKey2: "customValue2",
-              },
+                customKey2: "customValue2"
+              }
             },
             pinataContent: {
               // description: "Proof of Education",
@@ -81,18 +79,18 @@ function MintNft() {
               attributes: [
                 {
                   trait_type: "Date of issue",
-                  value: `${dateOfIssue}`,
+                  value: `${dateOfIssue}`
                 },
                 {
                   trait_type: "Name of the organisation",
-                  value: "SRMIST",
+                  value: "SRMIST"
                 },
                 {
                   trait_type: "Duration of the degree",
-                  value: `${degreePeriod}`,
-                },
-              ],
-            },
+                  value: `${degreePeriod}`
+                }
+              ]
+            }
           };
           var config = {
             method: "post",
@@ -100,9 +98,9 @@ function MintNft() {
             headers: {
               pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
               pinata_secret_api_key: process.env.REACT_APP_PINATA_API_SECRET,
-              "Content-Type": "application/json",
+              "Content-Type": "application/json"
             },
-            data: data,
+            data: data
           };
 
           axios(config)
@@ -171,7 +169,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Enter Student name"
@@ -189,7 +187,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Enter Address"
@@ -217,7 +215,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Enter Date of Issue: DD:MM:YY"
@@ -235,7 +233,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Degree period. Eg. 2019-2023"
@@ -281,7 +279,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Enter Student name"
@@ -299,7 +297,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Enter Address"
@@ -327,7 +325,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Enter Date of Issue: DD:MM:YY"
@@ -345,7 +343,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black",
+                        color: "black"
                       }}
                       variant="unstyled"
                       placeholder="Degree period. Eg. 2019-2023"
