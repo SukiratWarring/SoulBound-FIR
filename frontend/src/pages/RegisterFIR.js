@@ -13,7 +13,7 @@ function RegisterFIR() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contractInstance = new ethers.Contract(
-      process.env.REACT_APP_CERTINFT_CONTRACTADDRESS,
+      "0x938F54B97E213Ac9e6e55964be9C5592200E5d69",
       CertiNft.abi,
       signer
     );

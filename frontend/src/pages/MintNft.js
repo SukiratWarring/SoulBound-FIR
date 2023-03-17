@@ -36,17 +36,19 @@ function MintNft() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contractInstance = new ethers.Contract(
-      process.env.REACT_APP_CERTINFT_CONTRACTADDRESS,
+      "0x938F54B97E213Ac9e6e55964be9C5592200E5d69",
       CertiNft.abi,
       signer
     );
-    const tx = await contractInstance.safeMint(toAddress, uri);
+    const tx = await contractInstance.safeMint(toAddress, uri, {
+      gasLimit: 5000000
+    });
     const receipt = await tx.wait();
     console.log("receipt", receipt);
   };
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    const element = document.getElementById("print1"),
+    const element = document.getElementById("print"),
       canvas = await html2canvas(element),
       data = canvas.toDataURL("image/jpg"),
       link = document.createElement("a");
@@ -54,13 +56,15 @@ function MintNft() {
     link.href = data;
     link.download = "downloaded-image.jpg";
     canvas.toBlob((response) => {
+      console.log(response);
       const storageRef = firebase
         .storage()
         .ref(`/files/${name}-${toAddress.substring(0, 5)}-Degree`);
       storageRef.put(response).then((snapshot) => {
         snapshot.ref.getDownloadURL().then((url) => {
-          setImageUrl(url);
           console.log("url", url);
+          link.click();
+          console.log(toAddress);
           const data = {
             pinataOptions: {
               cidVersion: 1
@@ -96,8 +100,9 @@ function MintNft() {
             method: "post",
             url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
             headers: {
-              pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
-              pinata_secret_api_key: process.env.REACT_APP_PINATA_API_SECRET,
+              pinata_api_key: "9d71ac4adfa281d78bee",
+              pinata_secret_api_key:
+                "ec3f84c6cc4c1433ec0bbe7318f41d6d6c2e668b9a97eb0f676349ef506bc48e",
               "Content-Type": "application/json"
             },
             data: data
@@ -141,7 +146,7 @@ function MintNft() {
               <Flex
                 className="Mint-Cert-Cont"
                 backgroundImage={`linear-gradient(black, black),${uniLogo}`}
-                id="print1"
+                id="print"
               >
                 <Flex className="Mint-Cert">
                   <Flex className="Mint-Cert-Image">
@@ -251,7 +256,7 @@ function MintNft() {
               <Flex
                 className="Mint-Cert-Cont"
                 backgroundImage={`linear-gradient(black, black),${uniLogo}`}
-                id="print2"
+                id="print"
               >
                 <Flex className="Mint-Cert">
                   <Flex className="Mint-Cert-Image">
