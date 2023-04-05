@@ -1,8 +1,9 @@
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { ethers } from "ethers";
-import CertiNft from "../CertiNFT.sol/CertiNFT.json";
+import CertiNft from "../FirNFT_Logic.sol/FirNFT_Logic.json";
 import Navbar from "../components/Navbar";
+import { LoaderContext } from "../context/loader";
 import {
   Flex,
   Image,
@@ -11,18 +12,20 @@ import {
   TabList,
   TabPanel,
   TabPanels,
-  Tabs
+  Tabs,
 } from "@chakra-ui/react";
 import { checkWalletIsConnected } from "../services/checkWalletIsConencted";
 import { useNavigate } from "react-router-dom";
 import uniLogo from "../assets/comapnyLogo.png";
 import html2canvas from "html2canvas";
+// import { getStorage, ref } from "firebase/storage";
 import { firebase } from "../lib/firebase.prod";
 
 function MintNft() {
   const navigate = useNavigate();
-
+  const { setLoader } = useContext(LoaderContext);
   const [name, setName] = useState("");
+  // const [imageUrl, setImageUrl] = useState("");
   const [degreePeriod, setDegreePeriod] = useState("");
   const [dateOfIssue, setDateOfIssue] = useState("");
   const [toAddress, setToAddress] = useState("");
@@ -36,19 +39,18 @@ function MintNft() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contractInstance = new ethers.Contract(
-      "0x938F54B97E213Ac9e6e55964be9C5592200E5d69",
+      process.env.REACT_APP_CERTINFT_CONTRACTADDRESS,
       CertiNft.abi,
       signer
     );
-    const tx = await contractInstance.safeMint(toAddress, uri, {
-      gasLimit: 5000000
-    });
+    const tx = await contractInstance.safeMint(toAddress, uri);
     const receipt = await tx.wait();
     console.log("receipt", receipt);
   };
   const handleOnSubmit = async (e) => {
+    setLoader(true);
     e.preventDefault();
-    const element = document.getElementById("print"),
+    const element = document.getElementById("print1"),
       canvas = await html2canvas(element),
       data = canvas.toDataURL("image/jpg"),
       link = document.createElement("a");
@@ -56,56 +58,53 @@ function MintNft() {
     link.href = data;
     link.download = "downloaded-image.jpg";
     canvas.toBlob((response) => {
-      console.log(response);
       const storageRef = firebase
         .storage()
         .ref(`/files/${name}-${toAddress.substring(0, 5)}-Degree`);
       storageRef.put(response).then((snapshot) => {
-        snapshot.ref.getDownloadURL().then((url) => {
+        snapshot.ref.getDownloadURL().then(async (url) => {
           console.log("url", url);
-          link.click();
-          console.log(toAddress);
           const data = {
             pinataOptions: {
-              cidVersion: 1
+              cidVersion: 1,
             },
             pinataMetadata: {
               name: "Certificate",
               keyvalues: {
                 customKey: "customValue",
-                customKey2: "customValue2"
-              }
+                customKey2: "customValue2",
+              },
             },
             pinataContent: {
               // description: "Proof of Education",
-              image: url,
+              image: `https://gateway.pinata.cloud/ipfs/${`QmccW8JUUd4tgSYTH6nnWU7LRF1F2h7fCKXFU85RvKr5Fi`}`,
               name: `${name}`,
               attributes: [
                 {
                   trait_type: "Date of issue",
-                  value: `${dateOfIssue}`
+                  value: `${dateOfIssue}`,
                 },
                 {
                   trait_type: "Name of the organisation",
-                  value: "SRMIST"
+                  value: "SRMIST",
                 },
                 {
                   trait_type: "Duration of the degree",
-                  value: `${degreePeriod}`
-                }
-              ]
-            }
+                  value: `${degreePeriod}`,
+                },
+              ],
+            },
           };
+          setLoader(false);
           var config = {
             method: "post",
             url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
             headers: {
-              pinata_api_key: "9d71ac4adfa281d78bee",
-              pinata_secret_api_key:
-                "ec3f84c6cc4c1433ec0bbe7318f41d6d6c2e668b9a97eb0f676349ef506bc48e",
-              "Content-Type": "application/json"
+              pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
+              pinata_secret_api_key: process.env.REACT_APP_PINATA_API_SECRET,
+              "Content-Type": "application/json",
             },
-            data: data
+            data: data,
           };
 
           axios(config)
@@ -146,7 +145,7 @@ function MintNft() {
               <Flex
                 className="Mint-Cert-Cont"
                 backgroundImage={`linear-gradient(black, black),${uniLogo}`}
-                id="print"
+                id="print1"
               >
                 <Flex className="Mint-Cert">
                   <Flex className="Mint-Cert-Image">
@@ -174,7 +173,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Enter Student name"
@@ -192,7 +191,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Enter Address"
@@ -220,7 +219,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Enter Date of Issue: DD:MM:YY"
@@ -238,7 +237,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Degree period. Eg. 2019-2023"
@@ -256,7 +255,7 @@ function MintNft() {
               <Flex
                 className="Mint-Cert-Cont"
                 backgroundImage={`linear-gradient(black, black),${uniLogo}`}
-                id="print"
+                id="print2"
               >
                 <Flex className="Mint-Cert">
                   <Flex className="Mint-Cert-Image">
@@ -284,7 +283,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Enter Student name"
@@ -302,7 +301,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Enter Address"
@@ -330,7 +329,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Enter Date of Issue: DD:MM:YY"
@@ -348,7 +347,7 @@ function MintNft() {
                     <Input
                       color="black"
                       _placeholder={{
-                        color: "black"
+                        color: "black",
                       }}
                       variant="unstyled"
                       placeholder="Degree period. Eg. 2019-2023"

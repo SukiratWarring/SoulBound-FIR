@@ -15,18 +15,17 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
 
     constructor() ERC721("CertiNFT", "CNFT") {}
 
-    function safeMint(address to, string memory uri) public onlyOwner {
+    function safeMint(address to, string memory uri) public {
         uint256 tokenidTemp = tokenIDs.current();
         tokenIDs.increment();
         _safeMint(to, tokenidTemp);
         _setTokenURI(tokenidTemp, uri);
     }
 
-    function _setTokenURI(uint256 tokenId, string memory uri)
-        internal
-        virtual
-        override
-    {
+    function _setTokenURI(
+        uint256 tokenId,
+        string memory uri
+    ) internal virtual override {
         idToTokenUri[tokenId] = uri;
     }
 
@@ -41,7 +40,7 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256, /* tokenId */
+        uint256 /* tokenId */,
         uint256 /* batchSize */
     ) internal virtual override {
         require(
@@ -51,7 +50,7 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
     }
 
     function _afterTokenTransfer(
-        address, /* from */
+        address /* from */,
         address to,
         uint256 tokenId,
         uint256 /*batchSize*/
@@ -61,15 +60,15 @@ contract CertiNFT is ERC721, Ownable, ERC721URIStorage {
     }
 
     //Mandatory for Solidity
-    function _burn(uint256 tokenId)
-        internal
-        virtual
-        override(ERC721, ERC721URIStorage)
-    {
+    function _burn(
+        uint256 tokenId
+    ) internal virtual override(ERC721, ERC721URIStorage) {
         super._burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId)
+    function tokenURI(
+        uint256 tokenId
+    )
         public
         view
         virtual

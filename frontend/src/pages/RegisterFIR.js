@@ -19,7 +19,8 @@ function RegisterFIR() {
     );
     console.log("first", contractInstance);
     const tx = await contractInstance.createComplaint(by, _for, description);
-    console.log("tx", tx);
+    const receipt = await tx.wait();
+    console.log("receipt", receipt);
   };
   return (
     <Flex className="Container">
