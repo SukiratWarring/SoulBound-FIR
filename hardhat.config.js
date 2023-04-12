@@ -37,6 +37,11 @@ module.exports = {
           : [],
     },
   },
+  sepolia: {
+    url: process.env.SEPOLIA_URL,
+    accounts:
+      process.env.Wallet_key !== undefined ? [process.env.Wallet_key] : [],
+  },
   etherscan: {
     apiKey: {
       polygonMumbai: process.env.REACT_APP_POLYGONSCAN_API_KEY,
