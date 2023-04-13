@@ -1,17 +1,12 @@
-import {
-  Button,
-  Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea
-} from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import { Button, Flex, Input, Textarea } from "@chakra-ui/react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { ethers } from "ethers";
 import CertiNft from "../FirNFT_Logic.sol/FirNFT_Logic.json";
 import { checkWalletIsConnected } from "../services/checkWalletIsConencted";
 import { useNavigate } from "react-router-dom";
+import { LoaderContext } from "../context/loader";
+import axios from "axios";
 
 function RegisterFIR() {
   const navigate = useNavigate();
@@ -24,17 +19,63 @@ function RegisterFIR() {
     useState("10:00-14/04/2023");
 
   const [occurrencePlace, setOccurrencePlace] = useState("");
+  const [image, setImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const { setLoader } = useContext(LoaderContext);
+
   const handleOnSubmit = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(
-      "0x938F54B97E213Ac9e6e55964be9C5592200E5d69",
-      CertiNft.abi,
-      signer
-    );
-    console.log("first", contractInstance);
-    const tx = await contractInstance.createComplaint(by, suspect, description);
-    console.log("tx", tx);
+    console.log("by,suspect,description", by, suspect, description);
+    setLoader(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", image);
+
+      const resFile = await axios({
+        method: "post",
+        url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        data: formData,
+        headers: {
+          pinata_api_key: `${process.env.REACT_APP_PINATA_API_KEY}`,
+          pinata_secret_api_key: `${process.env.REACT_APP_PINATA_API_SECRET}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      console.log("resFile.data.IpfsHash", resFile.data.IpfsHash);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contractInstance = new ethers.Contract(
+        "0x938F54B97E213Ac9e6e55964be9C5592200E5d69",
+        CertiNft.abi,
+        signer
+      );
+      console.log("first", contractInstance);
+      const tx = await contractInstance.createComplaint(
+        by,
+        suspect,
+        description
+      );
+      const receipt = await tx.wait();
+      console.log("receipt", receipt);
+      setLoader(false);
+    } catch (error) {
+      setLoader(false);
+      console.log(error);
+    }
+  };
+  const handleFileUpload = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setImage(selectedFile);
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setPreviewUrl(fileReader.result);
+      };
+      fileReader.readAsDataURL(selectedFile);
+    } else {
+      setImage(null);
+      setPreviewUrl(null);
+    }
   };
 
   useEffect(() => {
@@ -177,12 +218,33 @@ function RegisterFIR() {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Flex>
+            <Flex direction="column" mb="10px">
+              <Flex>Associated and Relevant Image :</Flex>
+              <Flex className="Upload-FIR-Image">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                />
+
+                {previewUrl && (
+                  <Flex className="Upload-FIR-Preview">
+                    <img src={previewUrl} alt="Preview" />
+                  </Flex>
+                )}
+              </Flex>
+            </Flex>
           </Flex>
         </Flex>
 
-        <Button mb="50px" onClick={handleOnSubmit}>
+        <Flex
+          type="submit"
+          className={`btn btn-primary`}
+          mb="50px"
+          onClick={handleOnSubmit}
+        >
           Generate FIR
-        </Button>
+        </Flex>
       </Flex>
     </Flex>
   );

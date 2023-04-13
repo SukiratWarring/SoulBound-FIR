@@ -1,5 +1,6 @@
-import { React, useEffect, useState } from "react";
+import { React, useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import { LoaderContext } from "../context/loader";
 import {
   Flex,
   Image,
@@ -15,19 +16,21 @@ import { useNavigate } from "react-router-dom";
 import uniLogo from "../assets/comapnyLogo.png";
 import certLogo from "../assets/img_473965.png";
 import html2canvas from "html2canvas";
+// import { getStorage, ref } from "firebase/storage";
 import { firebase } from "../lib/firebase.prod";
 
 function MintNft() {
   const navigate = useNavigate();
-
+  const { setLoader } = useContext(LoaderContext);
   const [name, setName] = useState("");
+  // const [imageUrl, setImageUrl] = useState("");
   const [degreePeriod, setDegreePeriod] = useState("");
   const [dateOfIssue, setDateOfIssue] = useState("");
   const [toAddress, setToAddress] = useState("");
-
   const handleOnSubmit = async (e) => {
+    setLoader(true);
     e.preventDefault();
-    const element = document.getElementById("print"),
+    const element = document.getElementById("print1"),
       canvas = await html2canvas(element),
       data = canvas.toDataURL("image/jpg"),
       link = document.createElement("a");
@@ -76,7 +79,7 @@ function MintNft() {
               <Flex
                 className="Mint-Cert-Cont"
                 backgroundImage={`linear-gradient(black, black),${uniLogo}`}
-                id="print"
+                id="print1"
               >
                 <Flex className="Mint-Cert">
                   <Flex className="Mint-Cert-Image">
@@ -186,7 +189,7 @@ function MintNft() {
               <Flex
                 className="Mint-Cert-Cont"
                 backgroundImage={`linear-gradient(black, black),${uniLogo}`}
-                id="print"
+                id="print2"
               >
                 <Flex className="Mint-Cert">
                   <Flex className="Mint-Cert-Image">
