@@ -206,6 +206,17 @@
   margin-top: 50px;
   margin-bottom: 50px;
 }
+.Upload-FIR-Image{
+  margin-bottom: 50px;
+  flex-direction: column;
+}
+.Upload-FIR-Preview{
+  display: flex;
+  width: 200px;
+  height: 200px;
+  border : 2px solid black;
+  margin-top: 20px;
+}
 .Upload-Preview{
   display: flex;
   width: 500px;
