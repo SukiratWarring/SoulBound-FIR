@@ -7,6 +7,7 @@ import { firebase } from "./lib/firebase.prod";
 import { ChakraProvider } from "@chakra-ui/react";
 import Home from "./pages/Home";
 import RegisterFIR from "./pages/RegisterFIR";
+import UploadCert from "./pages/UploadCert";
 function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
 
@@ -19,6 +20,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/MintNft" element={<MintNft />} />
+                <Route path="/uploadCert" element={<UploadCert />} />
                 <Route path="/FIR" element={<RegisterFIR />} />
               </Routes>
             </BrowserRouter>

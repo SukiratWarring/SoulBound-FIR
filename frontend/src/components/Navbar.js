@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { checkWalletIsConnected } from "../services/checkWalletIsConencted";
 export default function Navbar() {
   const navigate = useNavigate();
@@ -15,38 +15,48 @@ export default function Navbar() {
     }
     checkingForWalletConnection();
   }, []);
+  const location = useLocation();
   return (
     <Flex className="Navbar-Container">
       <Flex className="Navbar-Links">
         {!walletConnected && (
-          <Flex
-            className="Navbar-Link"
-            onClick={() => {
-              navigate("/");
-            }}
+          <NavLink
+            exact
+            to="/"
+            isActive={() => ["/", "/home"].includes(location.pathname)}
           >
             Home
-          </Flex>
+          </NavLink>
         )}
         {walletConnected && (
-          <Flex
+          <NavLink
+            exact
+            to="/MintNft"
+            isActive={() => ["/MintNft"].includes(location.pathname)}
             className="Navbar-Link"
-            onClick={() => {
-              navigate("/MintNft");
-            }}
           >
             Create Certificates
-          </Flex>
+          </NavLink>
         )}
         {walletConnected && (
-          <Flex
+          <NavLink
+            exact
+            to="/uploadCert"
+            isActive={() => ["/uploadCert"].includes(location.pathname)}
             className="Navbar-Link"
-            onClick={() => {
-              navigate("/FIR");
-            }}
+          >
+            Upload Certificates
+          </NavLink>
+        )}
+        {walletConnected && (
+          <NavLink
+            exact
+            to="/FIR"
+            isActive={() => ["/FIR"].includes(location.pathname)}
+            className="Navbar-Link"
           >
             Register FIR
-          </Flex>
+          </NavLink>
         )}
       </Flex>
     </Flex>

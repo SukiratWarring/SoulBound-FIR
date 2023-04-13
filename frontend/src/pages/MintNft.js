@@ -1,7 +1,4 @@
 import { React, useEffect, useState } from "react";
-import axios from "axios";
-import { ethers } from "ethers";
-import CertiNft from "../CertiNFT.sol/CertiNFT.json";
 import Navbar from "../components/Navbar";
 import {
   Flex,
@@ -16,6 +13,7 @@ import {
 import { checkWalletIsConnected } from "../services/checkWalletIsConencted";
 import { useNavigate } from "react-router-dom";
 import uniLogo from "../assets/comapnyLogo.png";
+import certLogo from "../assets/img_473965.png";
 import html2canvas from "html2canvas";
 import { firebase } from "../lib/firebase.prod";
 
@@ -26,26 +24,7 @@ function MintNft() {
   const [degreePeriod, setDegreePeriod] = useState("");
   const [dateOfIssue, setDateOfIssue] = useState("");
   const [toAddress, setToAddress] = useState("");
-  const mintNft = async (CID) => {
-    const uri = `https://gateway.pinata.cloud/ipfs/${CID}`;
-    console.log(
-      "process.env.REACT_APP_CERTINFT_CONTRACTADDRESS",
-      process.env.REACT_APP_CERTINFT_CONTRACTADDRESS
-    );
-    //calling the contract with ethers
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contractInstance = new ethers.Contract(
-      "0x938F54B97E213Ac9e6e55964be9C5592200E5d69",
-      CertiNft.abi,
-      signer
-    );
-    const tx = await contractInstance.safeMint(toAddress, uri, {
-      gasLimit: 5000000
-    });
-    const receipt = await tx.wait();
-    console.log("receipt", receipt);
-  };
+
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     const element = document.getElementById("print"),
@@ -55,72 +34,23 @@ function MintNft() {
 
     link.href = data;
     link.download = "downloaded-image.jpg";
+    // link.click();
+
     canvas.toBlob((response) => {
-      console.log(response);
       const storageRef = firebase
         .storage()
         .ref(`/files/${name}-${toAddress.substring(0, 5)}-Degree`);
       storageRef.put(response).then((snapshot) => {
         snapshot.ref.getDownloadURL().then((url) => {
-          console.log("url", url);
-          link.click();
-          console.log(toAddress);
-          const data = {
-            pinataOptions: {
-              cidVersion: 1
-            },
-            pinataMetadata: {
-              name: "Certificate",
-              keyvalues: {
-                customKey: "customValue",
-                customKey2: "customValue2"
-              }
-            },
-            pinataContent: {
-              // description: "Proof of Education",
-              image: url,
-              name: `${name}`,
-              attributes: [
-                {
-                  trait_type: "Date of issue",
-                  value: `${dateOfIssue}`
-                },
-                {
-                  trait_type: "Name of the organisation",
-                  value: "SRMIST"
-                },
-                {
-                  trait_type: "Duration of the degree",
-                  value: `${degreePeriod}`
-                }
-              ]
-            }
-          };
-          var config = {
-            method: "post",
-            url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-            headers: {
-              pinata_api_key: "9d71ac4adfa281d78bee",
-              pinata_secret_api_key:
-                "ec3f84c6cc4c1433ec0bbe7318f41d6d6c2e668b9a97eb0f676349ef506bc48e",
-              "Content-Type": "application/json"
-            },
-            data: data
-          };
-
-          axios(config)
-            .then((res) => {
-              console.log(res.data.IpfsHash);
-              mintNft(res.data.IpfsHash);
-            })
-            .catch((err) => {
-              console.log("err", err);
-            });
+          console.log(
+            "Cert url",
+            "https://testnets.opensea.io/assets/mumbai/0x938f54b97e213ac9e6e55964be9c5592200e5d69/2"
+          );
         });
       });
     });
   };
-  const handelName = (e) => setName(e.target.value);
+  const handleName = (e) => setName(e.target.value);
 
   useEffect(() => {
     async function checkingForWalletConnection() {
@@ -138,7 +68,7 @@ function MintNft() {
         <Tabs isFitted w="80%" variant="enclosed">
           <TabList>
             <Tab>College Degree</Tab>
-            <Tab>Certificates</Tab>
+            <Tab>Certificate</Tab>
           </TabList>
 
           <TabPanels>
@@ -179,7 +109,7 @@ function MintNft() {
                       variant="unstyled"
                       placeholder="Enter Student name"
                       value={name}
-                      onChange={handelName}
+                      onChange={handleName}
                       textAlign={"center"}
                       fontWeight={"600"}
                       width="500px"
@@ -261,7 +191,7 @@ function MintNft() {
                 <Flex className="Mint-Cert">
                   <Flex className="Mint-Cert-Image">
                     <Image
-                      src={uniLogo}
+                      src={certLogo}
                       alt="University"
                       height="100%"
                       width="100%"
@@ -272,7 +202,7 @@ function MintNft() {
                     fontSize="28px"
                     fontWeight={"600"}
                   >
-                    Faculty of Engineering and Technology
+                    The certifying authority of
                   </Flex>
                   <Flex className="Mint-Cert-Description" fontSize="28px">
                     The Board of Management of the example university
@@ -289,7 +219,7 @@ function MintNft() {
                       variant="unstyled"
                       placeholder="Enter Student name"
                       value={name}
-                      onChange={handelName}
+                      onChange={handleName}
                       textAlign={"center"}
                       fontWeight={"600"}
                       width="500px"
@@ -314,14 +244,14 @@ function MintNft() {
                     />
                   </Flex>
                   <Flex className="Mint-Cert-Description" fontSize="28px">
-                    has been awarded the degree of
+                    has been awarded the certificate of
                   </Flex>
                   <Flex
                     className="Mint-Cert-Description"
                     fontWeight={"600"}
                     fontSize="28px"
                   >
-                    B.Tech in Computer Science Engineering
+                    Full stack development workshop
                   </Flex>
                   <Flex className="Mint-Cert-Description" fontSize="28px">
                     on
@@ -342,7 +272,7 @@ function MintNft() {
                     />
                   </Flex>
                   <Flex className="Mint-Cert-Description" fontSize="28px">
-                    having successfully completed during the years
+                    having successfully completed during the time
                   </Flex>
                   <Flex className="Mint-Cert-Input" my="10px">
                     <Input
@@ -371,7 +301,7 @@ function MintNft() {
           mt="50px"
           onClick={handleOnSubmit}
         >
-          Create and Send Certificate
+          Create and Download Certificate
         </Flex>
       </Flex>
     </Flex>
