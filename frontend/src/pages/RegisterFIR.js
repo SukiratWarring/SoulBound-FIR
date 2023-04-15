@@ -1,22 +1,24 @@
-import { Button, Flex, Input, Textarea } from "@chakra-ui/react";
+import { Flex, Input, Textarea, useDisclosure } from "@chakra-ui/react";
+import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { ethers } from "ethers";
-import CertiNft from "../FirNFT_Logic.sol/FirNFT_Logic.json";
+import CertiNft from "../FirNFT_Logic_v2.sol/FirNFT_Logic.json";
 import { checkWalletIsConnected } from "../services/checkWalletIsConencted";
 import { useNavigate } from "react-router-dom";
 import { LoaderContext } from "../context/loader";
-import axios from "axios";
-
+import Receipt from "../components/InvoiceModal";
 function RegisterFIR() {
   const navigate = useNavigate();
   const [by, setBy] = useState("");
+  const [invoiceData, setinvoiceData] = useState("");
   const [suspect, setSuspect] = useState("");
   const [description, setDescription] = useState("");
   const [occurrenceDateTime, setOccurrenceDateTime] =
     useState("10:00-14/04/2023");
   const [registrationDateTime, setRegistrationDateTime] =
     useState("10:00-14/04/2023");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [occurrencePlace, setOccurrencePlace] = useState("");
   const [image, setImage] = useState(null);
@@ -29,7 +31,7 @@ function RegisterFIR() {
     try {
       const formData = new FormData();
       formData.append("file", image);
-
+      console.log("formData", formData);
       const resFile = await axios({
         method: "post",
         url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -37,26 +39,33 @@ function RegisterFIR() {
         headers: {
           pinata_api_key: `${process.env.REACT_APP_PINATA_API_KEY}`,
           pinata_secret_api_key: `${process.env.REACT_APP_PINATA_API_SECRET}`,
-          "Content-Type": "multipart/form-data"
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
       console.log("resFile.data.IpfsHash", resFile.data.IpfsHash);
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const contractInstance = new ethers.Contract(
-        "0x938F54B97E213Ac9e6e55964be9C5592200E5d69",
+        "0xBc17E6D37e3C5a23358853F9938694929C2d9895",
         CertiNft.abi,
         signer
       );
       console.log("first", contractInstance);
+      console.log(
+        "process.env",
+        process.env.REACT_APP_CERTINFT_CONTRACTADDRESS
+      );
       const tx = await contractInstance.createComplaint(
         by,
         suspect,
-        description
+        description,
+        resFile.data.IpfsHash
       );
       const receipt = await tx.wait();
       console.log("receipt", receipt);
+      setinvoiceData(receipt);
+      onOpen();
       setLoader(false);
     } catch (error) {
       setLoader(false);
@@ -116,7 +125,7 @@ function RegisterFIR() {
               <Input
                 color="black"
                 _placeholder={{
-                  color: "black"
+                  color: "black",
                 }}
                 placeholder="Enter in format : mm:HH-DD/MM/YYYY"
                 variant="flushed"
@@ -134,7 +143,7 @@ function RegisterFIR() {
               <Input
                 color="black"
                 _placeholder={{
-                  color: "black"
+                  color: "black",
                 }}
                 placeholder="Enter in format : mm:HH-DD/MM/YYYY"
                 variant="flushed"
@@ -152,7 +161,7 @@ function RegisterFIR() {
               <Input
                 color="black"
                 _placeholder={{
-                  color: "black"
+                  color: "black",
                 }}
                 placeholder="Enter Complainant name"
                 variant="flushed"
@@ -170,7 +179,7 @@ function RegisterFIR() {
               <Input
                 color="black"
                 _placeholder={{
-                  color: "black"
+                  color: "black",
                 }}
                 placeholder="Enter place of occurrence"
                 variant="flushed"
@@ -188,7 +197,7 @@ function RegisterFIR() {
               <Input
                 color="black"
                 _placeholder={{
-                  color: "black"
+                  color: "black",
                 }}
                 placeholder="Enter name of suspect"
                 variant="flushed"
@@ -204,7 +213,7 @@ function RegisterFIR() {
               <Textarea
                 color="black"
                 _placeholder={{
-                  color: "black"
+                  color: "black",
                 }}
                 placeholder="Enter Full Description of the Offense"
                 variant="filled"
@@ -246,6 +255,7 @@ function RegisterFIR() {
           Generate FIR
         </Flex>
       </Flex>
+      <Receipt invoiceData={invoiceData} isOpen={isOpen} onClose={onClose} />
     </Flex>
   );
 }

@@ -10,7 +10,7 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
-  Input
+  Input,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 
@@ -49,7 +49,7 @@ export default function UploadCert() {
       signer
     );
     const tx = await contractInstance.safeMint(toAddress, uri, {
-      gasLimit: 5000000
+      gasLimit: 5000000,
     });
     const receipt = await tx.wait();
     console.log("receipt", receipt);
@@ -58,14 +58,14 @@ export default function UploadCert() {
   const handleSubmit = () => {
     const dataPayload = {
       pinataOptions: {
-        cidVersion: 1
+        cidVersion: 1,
       },
       pinataMetadata: {
         name: "Certificate",
         keyvalues: {
           customKey: "customValue",
-          customKey2: "customValue2"
-        }
+          customKey2: "customValue2",
+        },
       },
       pinataContent: {
         // description: "Proof of Education",
@@ -74,18 +74,18 @@ export default function UploadCert() {
         attributes: [
           {
             trait_type: "Date of issue",
-            value: `${dateOfIssue}`
+            value: `${dateOfIssue}`,
           },
           {
             trait_type: "Name of the organisation",
-            value: "SRMIST"
+            value: "SRMIST",
           },
           {
             trait_type: "Duration of the degree",
-            value: `${degreePeriod}`
-          }
-        ]
-      }
+            value: `${degreePeriod}`,
+          },
+        ],
+      },
     };
     var config = {
       method: "post",
@@ -94,9 +94,9 @@ export default function UploadCert() {
         pinata_api_key: "9d71ac4adfa281d78bee",
         pinata_secret_api_key:
           "ec3f84c6cc4c1433ec0bbe7318f41d6d6c2e668b9a97eb0f676349ef506bc48e",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      data: dataPayload
+      data: dataPayload,
     };
     axios(config)
       .then((res) => {

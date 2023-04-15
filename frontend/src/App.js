@@ -17,20 +17,23 @@ function App() {
 
   return (
     <div className="App">
-      <FirebaseContext.Provider value={{ firebase }}>
-        <UserContext.Provider value={{ currentAccount, setCurrentAccount }}>
-          <ChakraProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/MintNft" element={<MintNft />} />
-                <Route path="/uploadCert" element={<UploadCert />} />
-                <Route path="/FIR" element={<RegisterFIR />} />
-              </Routes>
-            </BrowserRouter>
-          </ChakraProvider>
-        </UserContext.Provider>
-      </FirebaseContext.Provider>
+      {loader && <Spinner />}
+      <LoaderContext.Provider value={{ loader, setLoader }}>
+        <FirebaseContext.Provider value={{ firebase }}>
+          <UserContext.Provider value={{ currentAccount, setCurrentAccount }}>
+            <ChakraProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/MintNft" element={<MintNft />} />
+                  <Route path="/uploadCert" element={<UploadCert />} />
+                  <Route path="/FIR" element={<RegisterFIR />} />
+                </Routes>
+              </BrowserRouter>
+            </ChakraProvider>
+          </UserContext.Provider>
+        </FirebaseContext.Provider>
+      </LoaderContext.Provider>
     </div>
   );
 }
