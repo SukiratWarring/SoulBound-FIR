@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import RegisterFIR from "./pages/RegisterFIR";
 import UploadCert from "./pages/UploadCert";
 import Spinner from "./components/Loader";
+import MyFir from "./pages/MyFir";
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
@@ -28,6 +29,7 @@ function App() {
                   <Route path="/MintNft" element={<MintNft />} />
                   <Route path="/uploadCert" element={<UploadCert />} />
                   <Route path="/FIR" element={<RegisterFIR />} />
+                  <Route path="/MyFir" element={<MyFir />} />
                 </Routes>
               </BrowserRouter>
             </ChakraProvider>

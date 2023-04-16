@@ -58,6 +58,16 @@ export default function Navbar() {
             Register FIR
           </NavLink>
         )}
+        {walletConnected && (
+          <NavLink
+            exact
+            to="/MyFir"
+            isActive={() => ["/MyFir"].includes(location.pathname)}
+            className="Navbar-Link"
+          >
+            My-Fir
+          </NavLink>
+        )}
       </Flex>
     </Flex>
   );
