@@ -29,44 +29,44 @@ function RegisterFIR() {
     console.log("by,suspect,description", by, suspect, description);
     setLoader(true);
     try {
-      const formData = new FormData();
-      formData.append("file", image);
-      console.log("formData", formData);
-      const resFile = await axios({
+      const data = new FormData();
+      console.log("image", image);
+      data.append("file", image);
+      data.append("upload_preset", "Sukirat");
+      data.append("cloud_name", "dfzeoclda");
+      fetch("https://api.cloudinary.com/v1_1/dfzeoclda/image/upload", {
         method: "post",
-        url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
-        data: formData,
-        headers: {
-          pinata_api_key: `${process.env.REACT_APP_PINATA_API_KEY}`,
-          pinata_secret_api_key: `${process.env.REACT_APP_PINATA_API_SECRET}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("resFile.data.IpfsHash", resFile.data.IpfsHash);
-
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contractInstance = new ethers.Contract(
-        "0xBc17E6D37e3C5a23358853F9938694929C2d9895",
-        CertiNft.abi,
-        signer
-      );
-      console.log("first", contractInstance);
-      console.log(
-        "process.env",
-        process.env.REACT_APP_CERTINFT_CONTRACTADDRESS
-      );
-      const tx = await contractInstance.createComplaint(
-        by,
-        suspect,
-        description,
-        resFile.data.IpfsHash
-      );
-      const receipt = await tx.wait();
-      console.log("receipt", receipt);
-      setinvoiceData(receipt);
-      onOpen();
-      setLoader(false);
+        body: data,
+      })
+        .then((res) => res.json())
+        .then(async (data) => {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const signer = provider.getSigner();
+          const contractInstance = new ethers.Contract(
+            "0xBc17E6D37e3C5a23358853F9938694929C2d9895",
+            CertiNft.abi,
+            signer
+          );
+          console.log("first", contractInstance);
+          console.log(
+            "process.env",
+            process.env.REACT_APP_CERTINFT_CONTRACTADDRESS
+          );
+          const tx = await contractInstance.createComplaint(
+            by,
+            suspect,
+            description,
+            data.secure_url
+          );
+          const receipt = await tx.wait();
+          console.log("receipt", receipt);
+          setinvoiceData(receipt);
+          onOpen();
+          setLoader(false);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     } catch (error) {
       setLoader(false);
       console.log(error);

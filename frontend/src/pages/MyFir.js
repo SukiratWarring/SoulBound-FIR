@@ -10,16 +10,26 @@ import {
   CardHeader,
   StackDivider,
   SimpleGrid,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalFooter,
+  Image,
 } from "@chakra-ui/react";
 import React, { useState, useContext } from "react";
 import Navbar from "../components/Navbar";
 import { ethers } from "ethers";
 import CertiNft from "../FirNFT_Logic_v2.sol/FirNFT_Logic.json";
 import { LoaderContext } from "../context/loader";
+
 function MyFir() {
   const [fetchedFirs, setfetchedFirs] = useState();
+  const [cardInfo, setcardInfo] = useState([]);
   const { setLoader } = useContext(LoaderContext);
-
+  const { onOpen, isOpen, onClose } = useDisclosure();
   const fetchInfo = async () => {
     setLoader(true);
     try {
@@ -54,6 +64,11 @@ function MyFir() {
       setLoader(false);
     }
   };
+  const cardClick = (element) => {
+    console.log("first", element);
+    setcardInfo(element);
+    onOpen();
+  };
 
   return (
     <Flex className="Container">
@@ -63,9 +78,9 @@ function MyFir() {
       </Flex>
       <SimpleGrid minChildWidth="250px" spacing="50px" padding={20}>
         {fetchedFirs
-          ? fetchedFirs.map((element) => {
+          ? fetchedFirs.map((element, key) => {
               return (
-                <Card>
+                <Card borderTop={"8px"} borderColor={"blue.400"}>
                   <CardHeader>
                     <Heading size="md">Fir Number: {`${element[0]}`}</Heading>
                   </CardHeader>
@@ -95,6 +110,14 @@ function MyFir() {
                           {element._description}
                         </Text>
                       </Box>
+                      <Box>
+                        <Button
+                          colorScheme={"blue"}
+                          onClick={() => cardClick(element)}
+                        >
+                          Click For Evidence
+                        </Button>
+                      </Box>
                     </Stack>
                   </CardBody>
                 </Card>
@@ -102,6 +125,19 @@ function MyFir() {
             })
           : ""}
       </SimpleGrid>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Fir Number: {parseInt(cardInfo[0])}</ModalHeader>
+          <ModalCloseButton />
+          <Image src={`${cardInfo[7]}`} borderRadius="lg" padding={"5"}></Image>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }
