@@ -1,5 +1,4 @@
 import { Flex, Input, Textarea, useDisclosure } from "@chakra-ui/react";
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { ethers } from "ethers";
@@ -65,6 +64,7 @@ function RegisterFIR() {
           setLoader(false);
         })
         .catch((err) => {
+          setLoader(false);
           console.log("err", err);
         });
     } catch (error) {

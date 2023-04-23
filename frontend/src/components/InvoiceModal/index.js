@@ -32,7 +32,7 @@ function Receipt({ invoiceData, isOpen, onClose }) {
                   fontSize={11}
                   fontWeight="bold"
                   color={"blue"}
-                  href={`https://sepolia.etherscan.io/tx/${invoiceData.transactionHash}`}
+                  href={`https://mumbai.polygonscan.com/tx/${invoiceData.transactionHash}`}
                 >
                   {invoiceData.transactionHash}
                 </Link>

@@ -41,16 +41,6 @@ export default function Navbar() {
         {walletConnected && (
           <NavLink
             exact
-            to="/uploadCert"
-            isActive={() => ["/uploadCert"].includes(location.pathname)}
-            className="Navbar-Link"
-          >
-            Upload Certificates
-          </NavLink>
-        )}
-        {walletConnected && (
-          <NavLink
-            exact
             to="/FIR"
             isActive={() => ["/FIR"].includes(location.pathname)}
             className="Navbar-Link"

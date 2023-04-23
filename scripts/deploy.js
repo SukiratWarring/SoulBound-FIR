@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-  const verifierContract = "FirNFT_Logic";
+  const verifierContract = "FirNFT_Logic_v2";
 
   const ERC721Verifier = await ethers.getContractFactory(verifierContract);
   const erc721Verifier = await ERC721Verifier.deploy();

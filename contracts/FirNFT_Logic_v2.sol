@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./CertiNFT.sol";
 
-contract FirNFT_Logic is CertiNFT {
+contract FirNFT_Logic_v2 is CertiNFT {
     using Counters for Counters.Counter;
     Counters.Counter public totalComplaints;
     struct Complaint {
